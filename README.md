@@ -5,7 +5,7 @@
 **Semester:** AY 2025-2026 Sem 1  
 
 ## Abstract
-This project implements the Apriori algorithm for association rule mining on [dataset name] containing [X] transactions. Key findings include [top rule example: "if {bread} then {butter}" with lift=2.3]. The analysis pipeline includes data preprocessing, exploratory data analysis (EDA), rule generation, and evaluation using support, confidence, lift, and conviction metrics. Business insights and actionable recommendations are derived from the strongest rules.
+This project implements the Apriori algorithm for association rule mining on the Bread Basket Dataset which contains a total of 9,465 transactions. Key findings include a top rule of "IF bread THEN coffee", temporal analysis, and a top rule of "IF pastry THEN bread" for the basket without coffee. The analysis pipeline includes exploratory data analysis (EDA), rule generation, and evaluation using support, confidence, and lift metrics. Business insights and actionable recommendations are derived from the strongest rules for both with or without coffee as well as the general observed temporal patterns.
 
 ## Table of Contents
 - [Abstract](#abstract)
@@ -45,7 +45,7 @@ Bakeries and Cafés face already experience high bread spoilage rates due to the
 - Preprocess the bakery/cafe data and perform EDA with visualizations
 - Implement Apriori algorithm twice to generate association rules, one with coffee and one without, both implemented with parameter tuning
 - Generate and evaluate top association rules
-- Evaluate rules using support, confidence, lift, and conviction metrics
+- Evaluate rules using support, confidence, and lift
 - Visualize patterns and derive business insights
 
 ### 1.3 Scope and Limitations
@@ -55,7 +55,7 @@ Bakeries and Cafés face already experience high bread spoilage rates due to the
 ## 2. Dataset Description
 ### 2.1 Source and Acquisition
 **Source:** [Bread Basket Dataset - Kaggle](https://www.kaggle.com/datasets/heeraldedhia/groceries-dataset)  
-**Size:** 9,684 transactions, 94 unique items  
+**Size:** 9,465 transactions, 94 unique items  
 **Format:** Transaction + Item + date_time + period_day + weekday_weekend → Transaction basket format
 
 ### 2.2 Data Structure
@@ -78,80 +78,109 @@ Transaction 3: ['Hot chocolate', 'Jam', 'Cookies']
 ## 3. Methodology
 
 ### 3.1 Data Preprocessing
-1. **One-Hot Encoding:** Converted to 9,708 × 169 binary transaction matrix
-2. **Item Filtering:** Retained top 50 items (support > 0.01) → 9,708 × 50 matrix
-3. **Final Dataset:** 9,708 transactions × 50 items (98.7% sparsity reduced to manageable size)
+1. **One-Hot Encoding:** Converted to 9,465 × 94 binary transaction matrix
+2. **Item Filtering:** Retained top 32 items (support > 0.02) → 9,708 × 32 matrix
+3. **Final Dataset:** 9,465 transactions × 32 items
 
 **Before/After Statistics:**
 | Metric | Raw Data | Processed Data |
 |--------|----------|----------------|
-| Transactions | 9,835 | 9,708 |
-| Unique Items | 169 | 50 |
-| Density | 0.12% | 2.1% |
+| Unique Items | 94 | 32 |
 
 ### 3.2 Exploratory Data Analysis
-- **Top 10 Items:** whole milk (25.3%), other vegetables (19.1%), rolls/buns (17.4%)
-- **Basket Size:** Mean=2.4 items, 68% transactions contain 1-3 items
-- **Co-occurrence:** whole milk appears with 89% of top 20 items
+- **Top 10 Items:** coffee (26.7%), bread (16.2%), tea (7%), cake (5%), pastry (4.2%), sandwich (3.8%), medialuna (3%), hot chocolate (2.9%), cookies (2.6%), brownie (1.8%)
+- **Basket Size:** Mean=2.2 items, 85.2% transactions contain 1-3 items
+- **Co-occurrence:** The **top 17 items**:  
+['coffee', 'bread', 'tea', 'cake', 'pastry', 'sandwich', 'medialuna', 'hot chocolate', 'cookies', 'brownie', 'farm house', 'muffin', 'alfajores', 'juice', 'soup', 'scone', 'toast']  
+appears with **100% of top 20 items** while  the **top 18-20th** items ['scandinavian', 'truffles', 'coke'] appears with **95% of the items**
+- **Most Purchases** - Most daily orders are done aroung **10am - 4pm**, Most of the weekly orders happen during **Saturday**, **November** had the most orders throughout the years.
 
 ### 3.3 Apriori Algorithm Implementation
 **Implementation:** mlxtend.frequent_patterns.apriori() with association_rules()
 
 ### 3.4 Evaluation Metrics
-- **Support:** \( \frac{\text{support}(A \cup B)}{N} \) - Absolute frequency
-- **Confidence:** \( \frac{\text{support}(A \cup B)}{\text{support}(A)} \) - Rule strength
-- **Lift:** \( \frac{\text{confidence}(A \to B)}{\text{support}(B)} \) - Rule interestingness (>1 = positive association)
-
+- **Support:** \($\frac{\text{frequency}(A \cup B)}{N}$\) - Absolute frequency
+- **Confidence:** \( $\frac{\text{support}(A \cup B)}{\text{support}(A)}$ \) - Rule strength
+- **Lift:** \( $\frac{\text{confidence}(A \to B)}{\text{support}(B)}$ \) - Rule interestingness (>1 = positive association)
+- **Conviction:** \($\frac{1−\text{support}(B)}{1−\text{confidence}(A→B)}$\) -Consequent dependence to Antecedent (higher values means more dependency)
+- **Leverage:** \($\text{support}(A→B)−\text{support}(A)*\text{support}(B)$\) - Independence (0 = independent, >1 = positive correlation, <1 = negative correlation)
 
 ## 4. Results
-### 4.1 Top Association Rules
+### 4.1 Top Association Rules ranked by Confidence
+With Coffee
+| Rank | Antecedents   | Consequents | Support | Confidence | Lift  |
+|------|---------------|-------------|---------|------------|-------|
+| 1    | toast         | coffee      | 0.024   | 0.704      | 1.472 |
+| 2    | medialuna     | coffee      | 0.035   | 0.569      | 1.19  |
+| 3    | pastry        | coffee      | 0.048   | 0.552      | 1.154 |
+| 4    | juice         | coffee      | 0.021   | 0.534      | 1.117 |
+| 5    | sandwich      | coffee      | 0.038   | 0.532      | 1.113 |
+| 6    | cake          | coffee      | 0.055   | 0.527      | 1.102 |
+| 7    | cookies       | coffee      | 0.028   | 0.518      | 1.084 |
+| 8    | hot chocolate | coffee      | 0.03    | 0.507      | 1.06  |
+| 9    | tea           | coffee      | 0.05    | 0.35       | 0.731 |
+| 10   | pastry        | bread       | 0.029   | 0.339      | 1.035 |
 
-| Rank | Antecedents | Consequents | Support | Confidence | Lift | Conviction | Leverage |
-|------|-------------|-------------|---------|------------|------|------------|----------|
-| 1 | {other vegetables} | {root vegetables} | 0.023 | 0.74 | 3.15 | 3.42 | 0.017 |
-| 2 | {yogurt} | {whole milk} | 0.028 | 0.68 | 2.12 | 2.31 | 0.015 |
-| 3 | {rolls/buns} | {whole milk} | 0.032 | 0.62 | 1.98 | 2.01 | 0.016 |
-| 4 | {sausage} | {frankfurter} | 0.015 | 0.81 | 4.23 | 4.67 | 0.012 |
-| 5 | {tropical fruit} | {other vegetables} | 0.021 | 0.65 | 2.34 | 2.41 | 0.014 |
+Without Coffee
+| Rank |  Antecedents |  Consequents |  Support |  Confidence |  Lift |
+|------|--------------|--------------|----------|-------------|-------|
+| 1    | pastry       | bread        | 0.033    | 0.339       | 0.905 |
+| 2    | cake         | tea          | 0.027    | 0.229       | 1.403 |
+| 3    | cake         | bread        | 0.027    | 0.225       | 0.6   |
+| 4    | tea          | bread        | 0.032    | 0.197       | 0.526 |
+| 5    | tea          | cake         | 0.027    | 0.167       | 1.403 |
+| 6    | bread        | pastry       | 0.033    | 0.089       | 0.905 |
+| 7    | bread        | tea          | 0.032    | 0.086       | 0.526 |
+| 8    | bread        | cake         | 0.027    | 0.071       | 0.6   |
 
 ### 4.2 Key Visualizations
-![Item Frequency Distribution](results/item_frequencies.png) 
+#### **Top 10 Association Rules by Confidence**  
+With Coffee
+![Top 10 Confident Rules w Coffee](images/conf_w_coffee.png)  
+Without Coffee   
+![Top 10 Confident Rules no Coffee](images/conf_no_coffee.png) 
+#### **Association Rules Visualization of Support, Confidences, and Lift** 
+With Coffee
+![Rules w Coffee](images/conf_sup_lift_w_coffee.png)  
+Without Coffee   
+![Rules no Coffee](images/conf_sup_lift_no_coffee.png) 
 
 ### 4.3 Performance Metrics
-Runtime: Preprocessing=42s, Apriori=18s, Rules=3s (Total: 63s)
-Scalability: Handles 10K+ transactions on standard laptop
+Total Runtime: Total: 1.54s
+Scalability: Handles 9k+ transactions on a laptop with 13th gen Intel i5 Processor
 
 
 ## 5. Discussion
 
 ### 5.1 Business Insights
-1. **Dairy Clustering:** whole milk as "hub item" (89% co-occurrence)
-2. **Vegetable Pairing:** root vegetables strongly associated with other vegetables
-3. **Breakfast Bundle:** yogurt + whole milk + rolls/buns (lift=2.1)
+1. **Goods Stocking:** Bakeries/Cafes stocking up more during Saturdays to expect more customer traffic
+2. **Rush Hours:** Service will be busier around 10am - 12pm. 
+3. **Coffee Craze:** Coffee is a must and should be consistently available given that they are in almost every pairing.
+4. **Classic Pairing** Toast and Coffee are the most bought pairing in items.
+5. **Past just Coffee** Tea is the second most paired item so have that in stock as well
 
 ### 5.2 Actionable Recommendations
-1. **Shelf Placement:** Place root vegetables near other vegetables
-2. **Bundling:** Promote "Breakfast Pack" (yogurt + milk + rolls)
-3. **Cross-promotion:** sausage → frankfurter discount coupons
-4. **Inventory:** Stock 25% more whole milk based on pairing frequency
+1. **Bundling:** Promote "Classic Pairing" (toast + coffee) as best sellers in the shops
+2. **Cross-promotion:** Make non-coffee pairings be discounted given certain time-frames that aren't as busy to encourage buying of these pairings
+3. **Inventory:** Stock more toast and coffee based on pairing frequency
+4. **Equipment Setup** Make sure toaster is near the coffee machine for efficient order processing.
 
 ### 5.3 Limitations
-- Single time period (no seasonality)
 - No customer demographics
 - Binary presence/absence (no quantities)
 
 ## 6. Conclusion
-The Apriori algorithm successfully identified 25 actionable association rules from 9,708 grocery transactions. Strongest patterns reveal natural product groupings (lift > 3.0) suitable for retail optimization. Future work includes temporal analysis, customer segmentation, and FP-Growth comparison.
+The Apriori algorithm successfully identified 3 actionable association rules from 9,465 bakery/cafe transactions. Strongest patterns reveal the demans of coffee in these businesses as well as the diversity of pairings means suitable for retail optimization. Future work includes customer spending behavior analysis, goods quantity analysis, and workflow analysis.
 
 
 ## 7. Video Presentation
-[![Final Presentation](demo/CSC172_[LastName]_Final.mp4)](demo/CSC172_[LastName]_Final.mp4)  
+[Final Presentation](https://youtu.be/Uz9AAeaPndw)  
 *5-minute demo: Problem → Dataset → Methods → Key Findings → Business Insights*
 
 ## References
 1. Agrawal, R., & Srikant, R. (1994). Fast Algorithms for Mining Association Rules. VLDB.
 2. mlxtend Documentation: https://rasbt.github.io/mlxtend/
-3. Groceries Dataset: https://www.kaggle.com/datasets/heeraldedhia/groceries-dataset
+3. Bread Basket Dataset: https://www.kaggle.com/datasets/mittalvasu95/the-bread-basket/code
 
 ## Appendix: Full Results
-**Complete rules CSV:** [results/rules_top25.csv](results/rules_top25.csv)  
+**Complete rules CSV for top 10 association rule based on confidence:** [results/top_association_rules_no_coffee.csv](results/top_association_rules_no_coffee.csv), [results/top_association_rules_w_coffee](results/top_association_rules_w_coffee)

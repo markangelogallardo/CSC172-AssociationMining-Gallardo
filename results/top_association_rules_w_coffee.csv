@@ -1,0 +1,11 @@
+Rank,Antecedents,Consequents,Support,Confidence,Lift,Conviction,Leverage
+1,toast,coffee,0.024,0.704,1.472,1.765,0.008
+2,medialuna,coffee,0.035,0.569,1.19,1.211,0.006
+3,pastry,coffee,0.048,0.552,1.154,1.165,0.006
+4,juice,coffee,0.021,0.534,1.117,1.12,0.002
+5,sandwich,coffee,0.038,0.532,1.113,1.115,0.004
+6,cake,coffee,0.055,0.527,1.102,1.103,0.005
+7,cookies,coffee,0.028,0.518,1.084,1.083,0.002
+8,hot chocolate,coffee,0.03,0.507,1.06,1.059,0.002
+9,tea,coffee,0.05,0.35,0.731,0.802,-0.018
+10,pastry,bread,0.029,0.339,1.035,1.017,0.001
